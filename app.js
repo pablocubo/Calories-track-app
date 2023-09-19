@@ -1,11 +1,21 @@
 // Function to calculate BMR
-function calculateBMR(weight, height, sex, age) {
+function calculateBMR(weight, height, sex, age, activityLevel) {
     let bmr = 0;
     if (sex === "male") {
         bmr = 10 * weight + 6.25 * height - 5 * age + 5;
     } else if (sex === "female") {
         bmr = 10 * weight + 6.25 * height - 5 * age - 161;
     }
+
+    // Adjust BMR based on activity level
+    if (activityLevel === "sedentary") {
+        bmr *= 1.2;
+    } else if (activityLevel === "moderate") {
+        bmr *= 1.55;
+    } else if (activityLevel === "active") {
+        bmr *= 1.725;
+    }
+
     return bmr;
 }
 
@@ -45,13 +55,15 @@ document.getElementById("calculateBMR").addEventListener("click", function () {
     const height = parseFloat(document.getElementById("height").value);
     const sex = document.getElementById("sex").value;
     const age = parseFloat(document.getElementById("age").value);
+    const activityLevel = document.getElementById("activityLevel").value;
 
     if (!isNaN(weight) && !isNaN(height) && !isNaN(age)) {
-        const bmr = calculateBMR(weight, height, sex, age);
-        document.getElementById("bmrResult").textContent = `Your BMR: ${bmr.toFixed(2)} calories/day`;
+        const bmr = calculateBMR(weight, height, sex, age, activityLevel);
+        document.getElementById("bmrResult").textContent = `Your BMR: ${bmr.toFixed(2)} calories/day for a ${activityLevel} activity level`;
 
-        // Save BMR to local storage
+        // Save BMR and activity level to local storage
         saveDataToLocalStorage("bmr", bmr);
+        saveDataToLocalStorage("activityLevel", activityLevel);
     }
 });
 
@@ -113,8 +125,9 @@ document.getElementById("calculateExercise").addEventListener("click", function 
 window.addEventListener("load", function () {
     // Retrieve and display BMR
     const savedBMR = retrieveDataFromLocalStorage("bmr");
+    const activityLevel = retrieveDataFromLocalStorage("activityLevel");
     if (savedBMR) {
-        document.getElementById("bmrResult").textContent = `Your BMR: ${savedBMR.toFixed(2)} calories/day`;
+        document.getElementById("bmrResult").textContent = `Your BMR: ${savedBMR.toFixed(2)} calories/day for a ${activityLevel} activity level`;
     }
 
     // Retrieve and display total calories consumed
@@ -125,8 +138,9 @@ window.addEventListener("load", function () {
 
 // Function to reset all stored data
 function resetAllData() {
-    // Clear BMR
+    // Clear BMR and activity level
     saveDataToLocalStorage("bmr", 0);
+    saveDataToLocalStorage("activityLevel", "");
     document.getElementById("bmrResult").textContent = "";
 
     // Clear food list and total calories consumed
