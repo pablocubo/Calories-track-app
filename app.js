@@ -1,4 +1,3 @@
-
 // Function to calculate BMR
 function calculateBMR(weight, height, sex, age, activityLevel) {
     let bmr = 0;
@@ -21,13 +20,16 @@ function calculateBMR(weight, height, sex, age, activityLevel) {
 }
 
 // Function to calculate total exercise calories
-function calculateTotalExerciseCalories(hiitDuration, runDuration, boulderingDuration, bikeDuration, strengthTrainingDuration) {
+function calculateTotalExerciseCalories(hiitDuration, runDuration, boulderingDuration, bikeDuration, strengthTrainingDuration, yogaDuration, warmUpDuration, masturbationDuration) {
     // Define calories burned per minute for different exercises
     const hiitCaloriesPerMinute = 14; // Adjust as needed
     const runCaloriesPerMinute = 11; // Adjust as needed
     const boulderingCaloriesPerMinute = 9; // Adjust as needed
     const bikeCaloriesPerMinute = 7; // Adjust as needed
     const strengthTrainingCaloriesPerMinute = 5; // Adjust as needed
+    const yogaCaloriesPerMinute = 3; // Adjust as needed
+    const warmUpCaloriesPerMinute = 3; // Adjust as needed
+    const masturbationCaloriesPerMinute = 2;
 
     // Calculate total exercise calories
     const totalExerciseCalories =
@@ -35,7 +37,10 @@ function calculateTotalExerciseCalories(hiitDuration, runDuration, boulderingDur
         runDuration * runCaloriesPerMinute +
         boulderingDuration * boulderingCaloriesPerMinute +
         bikeDuration * bikeCaloriesPerMinute +
-        strengthTrainingDuration * strengthTrainingCaloriesPerMinute;
+        strengthTrainingDuration * strengthTrainingCaloriesPerMinute +
+        yogaDuration * yogaCaloriesPerMinute +
+        warmUpDuration * warmUpCaloriesPerMinute +
+        masturbationDuration * masturbationCaloriesPerMinute;
 
     return totalExerciseCalories;
 }
@@ -96,29 +101,50 @@ document.getElementById("calculateExercise").addEventListener("click", function 
     const boulderingDuration = parseFloat(document.getElementById("boulderingDuration").value) || 0;
     const bikeDuration = parseFloat(document.getElementById("bikeDuration").value) || 0;
     const strengthTrainingDuration = parseFloat(document.getElementById("strengthTrainingDuration").value) || 0;
+    const yogaDuration = parseFloat(document.getElementById("yogaDuration").value) || 0;
+    const warmUpDuration = parseFloat(document.getElementById("warmUpDuration").value) || 0;
+    const masturbationDuration = parseFloat(document.getElementById("masturbationDuration").value) || 0; // masturbation
 
-    const totalExerciseCalories = calculateTotalExerciseCalories(
-        hiitDuration,
-        runDuration,
-        boulderingDuration,
-        bikeDuration,
-        strengthTrainingDuration
-    );
-
-    // Retrieve BMR from local storage
-    const bmr = retrieveDataFromLocalStorage("bmr") || 0;
-
-    // Retrieve total calories consumed from local storage
-    const totalCalories = retrieveDataFromLocalStorage("foodList") ? retrieveDataFromLocalStorage("foodList").reduce((total, food) => total + food.calories, 0) : 0;
-
-    // Calculate caloric deficit
-    const caloricDeficit = (bmr + totalExerciseCalories) - totalCalories;
-
-    if (caloricDeficit >= 500) {
-        document.getElementById("exerciseResult").textContent = `Bien wn! estay a dos pasos de Alex Megos, estas en ${caloricDeficit.toFixed(2)} deficit calorico. Buena!`;
+    if (
+        isNaN(hiitDuration) ||
+        isNaN(runDuration) ||
+        isNaN(boulderingDuration) ||
+        isNaN(bikeDuration) ||
+        isNaN(strengthTrainingDuration) ||
+        isNaN(yogaDuration) ||
+        isNaN(warmUpDuration) ||
+        isNaN(masturbationDuration)
+    ) {
+        // Display an error message or handle the validation as needed
+        document.getElementById("exerciseResult").textContent = "Please enter valid numbers for exercise durations.";
     } else {
-        const additionalExerciseCalories = (500 - caloricDeficit).toFixed(2);
-        document.getElementById("exerciseResult").textContent = `No seai pajero, para alcanzar tu meta de 500 calorias de deficit, aun tienes que quemar ${additionalExerciseCalories} calorias.`;
+
+        const totalExerciseCalories = calculateTotalExerciseCalories(
+            hiitDuration,
+            runDuration,
+            boulderingDuration,
+            bikeDuration,
+            strengthTrainingDuration,
+            yogaDuration,
+            warmUpDuration,
+            masturbationDuration,
+        );
+
+        // Retrieve BMR from local storage
+        const bmr = retrieveDataFromLocalStorage("bmr") || 0;
+
+        // Retrieve total calories consumed from local storage
+        const totalCalories = retrieveDataFromLocalStorage("foodList") ? retrieveDataFromLocalStorage("foodList").reduce((total, food) => total + food.calories, 0) : 0;
+
+        // Calculate caloric deficit
+        const caloricDeficit = (bmr + totalExerciseCalories) - totalCalories;
+
+        if (caloricDeficit >= 500) {
+            document.getElementById("exerciseResult").textContent = `Bien wn! estay a dos pasos de Alex Megos, estas en ${caloricDeficit.toFixed(2)} deficit calorico. Buena!`;
+        } else {
+            const additionalExerciseCalories = (500 - caloricDeficit).toFixed(2);
+            document.getElementById("exerciseResult").textContent = `No seai pajero, para alcanzar tu meta de 500 calorias de deficit, aun tienes que quemar ${additionalExerciseCalories} calorias.`;
+        }
     }
 });
 
@@ -155,6 +181,8 @@ function resetAllData() {
     document.getElementById("boulderingDuration").value = "";
     document.getElementById("bikeDuration").value = "";
     document.getElementById("strengthTrainingDuration").value = "";
+    document.getElementById("yogaDuration").value = "";
+    document.getElementById("warmUpDuration").value = "";
     document.getElementById("exerciseResult").textContent = "";
 }
 
