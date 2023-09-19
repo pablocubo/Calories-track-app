@@ -1,3 +1,4 @@
+
 // Function to calculate BMR
 function calculateBMR(weight, height, sex, age, activityLevel) {
     let bmr = 0;
